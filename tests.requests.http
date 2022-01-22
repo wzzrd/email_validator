@@ -1,0 +1,42 @@
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "marjoleinsteen@gmail.com"}
+
+###
+
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "mrburgerhout@yahoo.co.uk"}
+
+###
+
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "maxim@wzzrd.com"}
+
+###
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "maxim.wzzrd.com"}
+
+###
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "maxim@wzzrd@com"}
+
+###
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "wzzrd@com"}
+
+###
+GET http://localhost:8080/v1/validate
+Content-Type: application/json
+
+{"address":  "wzzrd.com"}
