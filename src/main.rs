@@ -10,10 +10,14 @@ use gethostname::gethostname;
 use log;
 
 #[derive(Deserialize, Apiv2Schema)]
+/// The email address to be checked
 struct Email {
+    /// The email address as a string
     address: String,
 }
 
+/// Validate the email address
+/// Will provide information syntax validity, and split the address into domain and username parts
 #[api_v2_operation]
 async fn validate_address(a: web::Json<Email>) -> Result<HttpResponse, Error> {
     log::info!("Verifying: {}", &a.address);
