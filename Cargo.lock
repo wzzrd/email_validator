@@ -819,9 +819,13 @@ dependencies = [
  "check-if-email-exists",
  "env_logger",
  "gethostname",
+ "indexmap",
  "log",
  "paperclip",
  "serde",
+ "serde_derive",
+ "serde_json",
+ "strum",
 ]
 
 [[package]]
@@ -839,7 +843,7 @@ version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c5f0096a91d210159eceb2ff5e1c4da18388a170e1e3ce948aac9c8fdbbf595"
 dependencies = [
- "heck",
+ "heck 0.3.3",
  "proc-macro2",
  "quote",
  "syn",
@@ -1177,6 +1181,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "heck"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2540771e65fc8cb83cd6e8a237f70c319bd5c29f78ed1084ba5d50eeac86f7f9"
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1302,6 +1312,7 @@ checksum = "282a6247722caba404c065016bbfa522806e51714c34f5dfc3e4a3a46fcb4223"
 dependencies = [
  "autocfg",
  "hashbrown",
+ "serde",
 ]
 
 [[package]]
@@ -1635,6 +1646,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "624a8340c38c1b80fd549087862da4ba43e08858af025b236e509b6649fc13d5"
 
 [[package]]
+name = "openapiv3"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6b4689110fd71f196934fbdf1ad0f0a4b49ea41fbc6f19008c00dba735b544c"
+dependencies = [
+ "indexmap",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "openssl"
 version = "0.10.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1670,12 +1692,13 @@ dependencies = [
 [[package]]
 name = "paperclip"
 version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dae420c972d8aa793ef8f179dba06aedcbcb4f924fe09d8cddebb73ea4f0c0ab"
+source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
 dependencies = [
  "anyhow",
+ "indexmap",
  "itertools",
  "once_cell",
+ "openapiv3",
  "paperclip-actix",
  "paperclip-core",
  "paperclip-macros",
@@ -1692,13 +1715,13 @@ dependencies = [
 [[package]]
 name = "paperclip-actix"
 version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dde6ef3bdf773e80e3afeaded697397d3ebd794885c53f481c3ede1aea263731"
+source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
 dependencies = [
  "actix-service",
  "actix-web",
  "futures",
  "once_cell",
+ "openapiv3",
  "paperclip-core",
  "paperclip-macros",
  "parking_lot",
@@ -1708,12 +1731,13 @@ dependencies = [
 [[package]]
 name = "paperclip-core"
 version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f83e598ac88b6bd499309669217ec6b1511f843de818d2a9b66e747424552daf"
+source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
 dependencies = [
  "actix-web",
+ "indexmap",
  "mime",
  "once_cell",
+ "openapiv3",
  "paperclip-macros",
  "parking_lot",
  "pin-project 1.0.10",
@@ -1727,10 +1751,9 @@ dependencies = [
 [[package]]
 name = "paperclip-macros"
 version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0f28bb5ce3045e59663eb5a31ede3c855a1092e698439ecc4608ae36d3d3fe3"
+source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
 dependencies = [
- "heck",
+ "heck 0.4.0",
  "http",
  "lazy_static",
  "mime",
@@ -2098,6 +2121,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustversion"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2cc38e8fa666e2de3c4aba7edeb5ffc5246c1c2ed0e3d17e560aeeba736b23f"
+
+[[package]]
 name = "ryu"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2165,18 +2194,18 @@ checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
 
 [[package]]
 name = "serde"
-version = "1.0.134"
+version = "1.0.136"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96b3c34c1690edf8174f5b289a336ab03f568a4460d8c6df75f2f3a692b3bc6a"
+checksum = "ce31e24b01e1e524df96f1c2fdd054405f8d7376249a5110886fb4b658484789"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.134"
+version = "1.0.136"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "784ed1fbfa13fe191077537b0d70ec8ad1e903cfe04831da608aa36457cb653d"
+checksum = "08597e7152fcd306f41838ed3e37be9eaeed2b61c42e2117266a554fab4662f9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2185,9 +2214,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.75"
+version = "1.0.78"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c059c05b48c5c0067d4b4b2b4f0732dd65feb52daf7e0ea09cd87e7dadc1af79"
+checksum = "d23c1ba4cf0efd44be32017709280b32d1cea5c3f1275c3b6d9e8bc54f758085"
 dependencies = [
  "itoa 1.0.1",
  "ryu",
@@ -2364,19 +2393,23 @@ checksum = "213701ba3370744dcd1a12960caa4843b3d68b4d1c0a5d575e0d65b2ee9d16c0"
 
 [[package]]
 name = "strum"
-version = "0.22.0"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7ac893c7d471c8a21f31cfe213ec4f6d9afeed25537c772e08ef3f005f8729e"
+checksum = "cae14b91c7d11c9a851d3fbc80a963198998c2a64eec840477fa92d8ce9b70bb"
+dependencies = [
+ "strum_macros",
+]
 
 [[package]]
 name = "strum_macros"
-version = "0.22.0"
+version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "339f799d8b549e3744c7ac7feb216383e4005d94bdb22561b3ab8f3b808ae9fb"
+checksum = "5bb0dc7ee9c15cea6199cde9a127fa16a4c5819af85395457ad72d68edc85a38"
 dependencies = [
- "heck",
+ "heck 0.3.3",
  "proc-macro2",
  "quote",
+ "rustversion",
  "syn",
 ]
 
