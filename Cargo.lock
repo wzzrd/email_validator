@@ -1692,7 +1692,7 @@ dependencies = [
 [[package]]
 name = "paperclip"
 version = "0.6.1"
-source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
+source = "git+https://github.com/paperclip-rs/paperclip.git?branch=master#df990451623d5131fd1e66fad0da138b75da81bb"
 dependencies = [
  "anyhow",
  "indexmap",
@@ -1715,7 +1715,7 @@ dependencies = [
 [[package]]
 name = "paperclip-actix"
 version = "0.4.2"
-source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
+source = "git+https://github.com/paperclip-rs/paperclip.git?branch=master#df990451623d5131fd1e66fad0da138b75da81bb"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1731,7 +1731,7 @@ dependencies = [
 [[package]]
 name = "paperclip-core"
 version = "0.4.1"
-source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
+source = "git+https://github.com/paperclip-rs/paperclip.git?branch=master#df990451623d5131fd1e66fad0da138b75da81bb"
 dependencies = [
  "actix-web",
  "indexmap",
@@ -1751,7 +1751,7 @@ dependencies = [
 [[package]]
 name = "paperclip-macros"
 version = "0.5.1"
-source = "git+file:///Users/maxim/work/paperclip?rev=6a20ad4#6a20ad4f47e7a77c821126259f8ab7fb6c4da4b6"
+source = "git+https://github.com/paperclip-rs/paperclip.git?branch=master#df990451623d5131fd1e66fad0da138b75da81bb"
 dependencies = [
  "heck 0.4.0",
  "http",

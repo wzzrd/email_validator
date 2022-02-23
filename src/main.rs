@@ -44,7 +44,7 @@ impl From<SyntaxDetails> for VerifiedEmail {
             None => "invalid address".to_string(),
         };
         VerifiedEmail {
-            address: address,
+            address,
             domain: s.domain.into(),
             is_valid_syntax: s.is_valid_syntax.into(),
             username: s.username.into()
@@ -59,12 +59,6 @@ enum version_lifecycle {
     DEPRECATED,
     DRAFT
 }
-
-// impl fmt::Display for version_lifecycle {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         write!(f, "{:?}", self)
-//     }
-// }
 
 /// Validate the email address
 ///
@@ -112,6 +106,10 @@ async fn main() -> std::io::Result<()> {
     };
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
+    let port = std::env::var("PORT")
+        .unwrap_or_else(|_| "8080".to_string())
+        .parse()
+        .expect("PORT must be a number!");
     HttpServer::new(move || {
         App::new()
             .wrap_api_with_spec(spec.clone())
@@ -120,7 +118,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
             .build()
         })
-    .bind("127.0.0.1:8080")?
+    .bind(("0.0.0.0", port))?
     .run()
     .await
     
