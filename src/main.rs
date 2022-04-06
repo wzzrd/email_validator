@@ -121,6 +121,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Cors::default()
                 .permissive()
+            )
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
             .build()
         })
