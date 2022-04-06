@@ -16,6 +16,8 @@ use indexmap::IndexMap;
 use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License};
 use log;
 use strum::Display;
+use actix_cors::Cors;
+use actix_web::http::header;
 
 #[derive(Deserialize, Apiv2Schema)]
 /// The email address to be checked
@@ -76,6 +78,8 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
+
+
     log::info!("Setting schema defaults");
     let mut spec = DefaultApiRaw::default();
     let badges = serde_json::json!([{"name": "env", "value": "dev"}, {"name": "security", "value": "medium"}, { "name": "region", "value": "global"}]);
@@ -115,6 +119,12 @@ async fn main() -> std::io::Result<()> {
             .wrap_api_with_spec(spec.clone())
             .with_json_spec_at("/spec/v2")
             .wrap(Logger::default())
+            .wrap(Cors::default()
+                .allowed_origin("https://*.hub.rapidapi.com")
+                .allowed_methods(vec!["GET", "POST"])
+                .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+                .allowed_header(header::CONTENT_TYPE)
+                .max_age(3600))
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
             .build()
         })
