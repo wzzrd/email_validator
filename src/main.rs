@@ -120,7 +120,7 @@ async fn main() -> std::io::Result<()> {
             .with_json_spec_at("/spec/v2")
             .wrap(Logger::default())
             .wrap(Cors::default()
-                .allowed_origin("https://*.hub.rapidapi.com")
+                .allowed_origin("*")
                 .allowed_methods(vec!["GET", "POST"])
                 .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
                 .allowed_header(header::CONTENT_TYPE)
