@@ -18,6 +18,7 @@ use log;
 use strum::Display;
 use actix_cors::Cors;
 use actix_web::http::header;
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 
 #[derive(Deserialize, Apiv2Schema)]
 /// The email address to be checked
@@ -110,6 +111,9 @@ async fn main() -> std::io::Result<()> {
     };
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
+    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    builder.set_private_key_file("key.pem", SslFiletype::PEM).unwrap();
+    builder.set_certificate_chain_file("cert.pem").unwrap();
     let port = std::env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
         .parse()
@@ -123,7 +127,7 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
             .build()
         })
-    .bind(("0.0.0.0", port))?
+    .bind_openssl(("0.0.0.0", port), builder)?
     .run()
     .await
     
