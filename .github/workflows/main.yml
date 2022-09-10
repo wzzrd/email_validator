@@ -5,8 +5,8 @@ on:
     branches: [ main ]
       
 jobs:
-  build:
-    name: Rust project
+  debug_build:
+    name: Email validator build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,7 +16,27 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --all-features
+
+  container_build:
+    name: Build and push container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USER_NAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Build and push container
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Containerfile
+          push: true
+          tags: wzzrd/email_validation_github:latest
+
+
+
 
 
 
