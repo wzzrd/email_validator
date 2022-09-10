@@ -67,10 +67,10 @@ enum version_lifecycle {
 ///
 /// Will provide information syntax validity, and split the address into domain and username parts
 #[api_v2_operation]
-async fn validate_address(a: web::Json<Email>) -> Result<web::Json<VerifiedEmail>, Error> {
+async fn validate_address(a: Json<Email>) -> Result<web::Json<VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
     let res = check_syntax(&a.address);
-    Ok(web::Json(VerifiedEmail::from(res)))
+    Ok(Json(VerifiedEmail::from(res)))
 }
 
 
@@ -121,7 +121,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap_api_with_spec(spec.clone())
-            .with_json_spec_at("/spec/v2")
+            .with_json_spec_v3_at("/spec/v3")
             .wrap(Logger::default())
             .wrap(Cors::permissive())
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
