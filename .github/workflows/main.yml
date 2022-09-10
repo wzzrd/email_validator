@@ -34,7 +34,7 @@ jobs:
           context: .
           file: Containerfile
           push: true
-          tags: wzzrd/email_validation_github:latest
+          tags: quay.io/wzzrd/email_validation_github:latest
 
 
 
