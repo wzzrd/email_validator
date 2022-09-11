@@ -105,7 +105,7 @@ async fn main() -> std::io::Result<()> {
         version: "0.2".into(),
         contact: Some(Contact { name: Some("Maxim Burgerhout".to_string()), email: Some("maxim@wzzrd.com".to_string()), url: Some("https://www.wzzrd.com".to_string()) }),
         license: Some(License { name: Some("something legal".to_string()), url: Some("https://www.wzzrd.com".to_string()) }),
-        title: "Email address verification".into(),
+        title: "Email address verification GitHub Test".into(),
         description: Some("This API verifies the validity of email addresses".to_string()),
         extensions: info_exts,
     };
