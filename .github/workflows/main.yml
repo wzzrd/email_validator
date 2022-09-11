@@ -27,6 +27,7 @@ jobs:
     name: Upload spec to RapidAPI
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: maxim-rapidapi/create_or_update_rapidapi@master
         with:
           spec_path: openapi.json
