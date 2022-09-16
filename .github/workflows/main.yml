@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: maxim-rapidapi/create_or_update_rapidapi@master
+      - uses: maxim-rapidapi/create_or_update_rapidapi@main
         with:
           spec_path: openapi.json
           owner_id: ${{ secrets.OWNER_ID }}
