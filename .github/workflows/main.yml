@@ -31,12 +31,7 @@ jobs:
       - uses: maxim-rapidapi/create_or_update_rapidapi@master
         with:
           spec_path: openapi.json
+          owner_id: ${{ secrets.OWNER_ID }}
           x_rapidapi_key: ${{ secrets.X_RAPIDAPI_KEY }}
-          x_rapidapi_host: ${{ secrets.X_RAPIDAPI_HOST }}
-          
-
-
-
-
-
-
+          x_rapidapi_rest_host: ${{ secrets.X_RAPIDAPI_REST_HOST }}
+          x_rapidapi_graphql_host: ${{ secrets.X_RAPIDAPI_GRAPHQL_HOST }}
