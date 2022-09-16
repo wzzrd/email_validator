@@ -29,10 +29,17 @@ jobs:
     needs: container_build
     steps:
       - uses: actions/checkout@v2
-      - uses: maxim-rapidapi/create_or_update_rapidapi@main
+      - name: Upload spec to RapidAPI Hub
+        uses: maxim-rapidapi/create_or_update_rapidapi@main
+        id: rapidapi-upload
         with:
           spec_path: openapi.json
           owner_id: ${{ secrets.OWNER_ID }}
           x_rapidapi_key: ${{ secrets.X_RAPIDAPI_KEY }}
           x_rapidapi_rest_host: ${{ secrets.X_RAPIDAPI_REST_HOST }}
           x_rapidapi_graphql_host: ${{ secrets.X_RAPIDAPI_GRAPHQL_HOST }}
+      - name: Test output variables
+        run: |
+          echo "New API ID - ${{ steps.rapidapi-upload.outputs.api_id }}"
+          echo "New API version name - ${{ steps.rapidapi-upload.outputs.api_version_name }}"
+          echo "New API version ID - ${{ steps.rapidapi-upload.outputs.api_version_id }}"
