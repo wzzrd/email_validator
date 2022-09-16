@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Upload spec to RapidAPI Hub
-        uses: maxim-rapidapi/create_or_update_rapidapi@main
+        uses: maxim-rapidapi/create_or_update_rapidapi@v0
         id: rapidapi-upload
         with:
           spec_path: openapi.json
