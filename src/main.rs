@@ -82,7 +82,22 @@ async fn main() -> std::io::Result<()> {
 
     log::info!("Setting schema defaults");
     let mut spec = DefaultApiRaw::default();
-    let badges = serde_json::json!([{"name": "env", "value": "dev"}, {"name": "security", "value": "medium"}, { "name": "region", "value": "global"}]);
+    let badges = serde_json::json!(
+        [
+            {
+                "name": "env",
+                "value": "dev"
+            },
+            {
+                "name": "security",
+                "value": "medium"
+            },
+            {
+                "name": "region",
+                "value": "global"
+            }
+        ]
+    );
     let mut info_exts = BTreeMap::new();
     info_exts.insert("x-category".to_string(), serde_json::json!("Utility APIs"));
     info_exts.insert(
@@ -118,8 +133,22 @@ async fn main() -> std::io::Result<()> {
     info_exts.insert("x-badges".to_string(), badges);
 
     let mut root_exts = BTreeMap::new();
-    root_exts.insert("x-documentation".to_string(),
-                     serde_json::json!({"readme": "this is the readme string", "spotlights": [{ "title": "a spotlight", "description": "the spotlight explained", "link": "https://www.wzzrd.com"}]}));
+    root_exts.insert(
+        "x-documentation".to_string(),
+        serde_json::json!(
+            {
+                "readme": "this is the readme string",
+                "spotlights":
+                [
+                    {
+                        "title": "a spotlight",
+                        "description": "the spotlight explained",
+                        "link": "https://www.wzzrd.com"
+                    }
+                ]
+            }
+        ),
+    );
 
     spec.extensions = root_exts;
 
