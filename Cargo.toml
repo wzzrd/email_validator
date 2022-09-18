@@ -17,5 +17,4 @@ paperclip = { git = "https://github.com/paperclip-rs/paperclip.git", branch = "m
 indexmap = "1.8.0"
 serde_json = "1.0.76"
 serde_derive = "1.0.136"
-strum = { version = "0.24.1", features = ["derive"] }
 openssl = "0.10.41"

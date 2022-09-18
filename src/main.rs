@@ -20,7 +20,6 @@ use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
-use strum::Display;
 
 #[derive(Deserialize, Apiv2Schema)]
 /// The email address to be checked
@@ -57,11 +56,14 @@ impl From<SyntaxDetails> for VerifiedEmail {
     }
 }
 
-#[derive(Debug, Display, Serialize)]
-#[strum(serialize_all = "lowercase")]
-enum version_lifecycle {
+#[derive(Debug, Serialize)]
+#[serde(rename = "version_lifecycle")]
+enum VersionLifecycle {
+    #[serde(rename = "active")]
     ACTIVE,
+    #[serde(rename = "deprecated")]
     DEPRECATED,
+    #[serde(rename = "draft")]
     DRAFT,
 }
 
@@ -69,7 +71,7 @@ enum version_lifecycle {
 ///
 /// Will provide information syntax validity, and split the address into domain and username parts
 #[api_v2_operation]
-async fn validate_address(a: Json<Email>) -> Result<web::Json<VerifiedEmail>, Error> {
+async fn validate_address(a: Json<Email>) -> Result<Json<VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
     let res = check_syntax(&a.address);
     Ok(Json(VerifiedEmail::from(res)))
@@ -113,7 +115,9 @@ async fn main() -> std::io::Result<()> {
     );
     info_exts.insert(
         "x-version-lifecycle".to_string(),
-        serde_json::Value::String(version_lifecycle::ACTIVE.to_string()),
+        serde_json::to_string(&VersionLifecycle::ACTIVE)
+            .unwrap()
+            .parse()?,
     );
     info_exts.insert(
         "x-collections".to_string(),
