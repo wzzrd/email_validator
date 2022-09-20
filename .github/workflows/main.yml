@@ -2,7 +2,11 @@ name: build container and push
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'test_quay_push'
+    tags:
+      - 'v*'
       
 jobs:
   container_build:
@@ -16,13 +20,25 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USER_NAME }}
           password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            quay.io/wzzrd/email_validation_github
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Build and push container
         uses: docker/build-push-action@v3
         with:
           context: .
           file: Containerfile
-          push: true
-          tags: quay.io/wzzrd/email_validation_github:latest
+          push: ${{ github.event_name == 'push tag' }}
+          tags: ${{ steps.meta.output.tags }}
+          labels: ${{ steps.meta.output.labels }}
   upload_spec:
     name: Upload spec to RapidAPI
     runs-on: ubuntu-latest
