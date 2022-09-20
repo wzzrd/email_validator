@@ -22,7 +22,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            quay.io/wzzrd/email_validation_github
+            quay.io/wzzrd/email_validation
           tags: |
             type=ref,event=branch
             type=ref,event=pr
