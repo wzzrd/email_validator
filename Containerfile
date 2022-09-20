@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9-minimal:latest as builder
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.0.0-1608 as builder
 USER root
 RUN microdnf -y install glibc-devel openssl-devel gcc
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
