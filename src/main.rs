@@ -157,7 +157,7 @@ async fn main() -> std::io::Result<()> {
     spec.extensions = root_exts;
 
     spec.info = Info {
-        version: "0.3.0".into(),
+        version: "0.4.0".into(),
         contact: Some(Contact {
             name: Some("Maxim Burgerhout".to_string()),
             email: Some("maxim@wzzrd.com".to_string()),
@@ -167,7 +167,7 @@ async fn main() -> std::io::Result<()> {
             name: Some("something legal".to_string()),
             url: Some("https://www.wzzrd.com".to_string()),
         }),
-        title: "Email address verification GitHub Test".into(),
+        title: "Email address verification".into(),
         description: Some("This API verifies the validity of email addresses".to_string()),
         extensions: info_exts,
     };
