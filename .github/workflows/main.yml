@@ -55,8 +55,8 @@ jobs:
         run: echo "${{ steps.yamlspec.outputs.data}}" > openapi.yaml
 
       - name: Verify OpenAPI Spec File
-        uses: eveoh/oas3-lint@v1
+        uses: nwestfall/openapi-action@v1.0.2
         with:
-          spec: 'openapi.yaml'
+          file: 'openapi.yaml'
           token: ${{ secrets.GITHUB_TOKEN }}
 
