@@ -40,6 +40,9 @@ jobs:
     name: verify_spec
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
       - name: Convert spec file to YAML
         uses: fabasoad/yaml-json-xml-converter-action@v1.0.14
         id: yamlspec
@@ -47,8 +50,10 @@ jobs:
           path: 'openapi.json'
           from: 'json'
           to: 'yaml'
+
       - name: write file
         run: echo "${{ steps.yamlspec.outputs.data}}" > openapi.yaml
+
       - name: Verify OpenAPI Spec File
         uses: eveoh/oas3-lint@v1
         with:
