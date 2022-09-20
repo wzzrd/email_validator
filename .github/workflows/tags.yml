@@ -1,0 +1,58 @@
+name: Build and push container
+
+on:
+  push:
+    tags:
+      - 'v*'
+      
+jobs:
+  container_build:
+    name: Build and push container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log into Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USER_NAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            quay.io/wzzrd/email_validation
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Build and push container
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Containerfile
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  upload_spec:
+    name: Upload spec to RapidAPI
+    runs-on: ubuntu-latest
+    needs: container_build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Upload spec to RapidAPI Hub
+        uses: maxim-rapidapi/create_or_update_rapidapi@v0
+        id: rapidapi-upload
+        with:
+          spec_path: openapi.json
+          owner_id: ${{ secrets.OWNER_ID }}
+          x_rapidapi_key: ${{ secrets.X_RAPIDAPI_KEY }}
+          x_rapidapi_rest_host: ${{ secrets.X_RAPIDAPI_REST_HOST }}
+          x_rapidapi_graphql_host: ${{ secrets.X_RAPIDAPI_GRAPHQL_HOST }}
+      - name: Test output variables
+        run: |
+          echo "New API ID - ${{ steps.rapidapi-upload.outputs.api_id }}"
+          echo "New API version name - ${{ steps.rapidapi-upload.outputs.api_version_name }}"
+          echo "New API version ID - ${{ steps.rapidapi-upload.outputs.api_version_id }}"
