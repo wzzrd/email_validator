@@ -34,8 +34,8 @@ jobs:
           context: .
           file: Containerfile
           push: ${{ github.event_name == 'push' }}
-          tags: ${{ steps.meta.output.tags }}
-          labels: ${{ steps.meta.output.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
   upload_spec:
     name: Upload spec to RapidAPI
     runs-on: ubuntu-latest
