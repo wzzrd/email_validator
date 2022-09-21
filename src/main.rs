@@ -6,6 +6,7 @@ use actix_web::{App, Error, HttpServer};
 use check_if_email_exists::syntax::{check_syntax, SyntaxDetails};
 use gethostname::gethostname;
 use log;
+use log::error;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use paperclip::actix::{
     api_v2_operation,
@@ -15,7 +16,6 @@ use paperclip::actix::{
 use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License, OperationProtocol};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
-use log::error;
 use std::process;
 
 #[derive(Deserialize, Apiv2Schema)]
@@ -101,9 +101,7 @@ async fn main() -> std::io::Result<()> {
     );
     info_exts.insert(
         "x-version-lifecycle".to_string(),
-        serde_json::to_string("active")
-            .unwrap()
-            .parse()?,
+        serde_json::to_string("active").unwrap().parse()?,
     );
     info_exts.insert(
         "x-collections".to_string(),
@@ -148,9 +146,9 @@ async fn main() -> std::io::Result<()> {
     let gw = match std::env::var("GATEWAY") {
         Ok(g) => g,
         Err(_) => {
-           error!("You should set the GATEWAY variable to the gateway this API is behind");
-           error!("before running it. Otherwise, I cannot render a proper OAS.");
-           process::exit(1);
+            error!("You should set the GATEWAY variable to the gateway this API is behind");
+            error!("before running it. Otherwise, I cannot render a proper OAS.");
+            process::exit(1);
         }
     };
     spec.host = Some(gw);
