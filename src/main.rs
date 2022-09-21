@@ -143,7 +143,16 @@ async fn main() -> std::io::Result<()> {
     spec.extensions = root_exts;
     spec.schemes = BTreeSet::new();
     spec.schemes.insert(OperationProtocol::Https);
-    let gw = std::env::var("GATEWAY").unwrap_or_else(|_| "foobar".to_string());
+
+    // Set API gateway to populate server field in OAS
+    let gw = match std::env::var("GATEWAY") {
+        Ok(g) => g,
+        Err(_) => {
+           error!("You should set the GATEWAY variable to the gateway this API is behind");
+           error!("before running it. Otherwise, I cannot render a proper OAS.");
+           process::exit(1);
+        }
+    };
     spec.host = Some(gw);
     spec.base_path = Some("/".to_string());
 
