@@ -56,17 +56,6 @@ impl From<SyntaxDetails> for VerifiedEmail {
     }
 }
 
-#[derive(Debug, Serialize)]
-#[serde(rename = "version_lifecycle")]
-enum VersionLifecycle {
-    #[serde(rename = "active")]
-    ACTIVE,
-    #[serde(rename = "deprecated")]
-    DEPRECATED,
-    #[serde(rename = "draft")]
-    DRAFT,
-}
-
 /// Validate the email address
 ///
 /// Will provide information syntax validity, and split the address into domain and username parts
@@ -115,7 +104,7 @@ async fn main() -> std::io::Result<()> {
     );
     info_exts.insert(
         "x-version-lifecycle".to_string(),
-        serde_json::to_string(&VersionLifecycle::ACTIVE)
+        serde_json::to_string("active")
             .unwrap()
             .parse()?,
     );
