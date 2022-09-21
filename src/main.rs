@@ -16,9 +16,9 @@ use paperclip::actix::{
     Apiv2Schema, OpenApiExt,
 };
 use paperclip::api_v2_schema;
-use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License};
+use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License, OperationProtocol};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
 
 #[derive(Deserialize, Apiv2Schema)]
@@ -144,6 +144,11 @@ async fn main() -> std::io::Result<()> {
     );
 
     spec.extensions = root_exts;
+    spec.schemes = BTreeSet::new();
+    spec.schemes.insert(OperationProtocol::Https);
+    let gw = std::env::var("GATEWAY").unwrap_or_else(|_| "foobar".to_string());
+    spec.host = Some(gw);
+    spec.base_path = Some("/".to_string());
 
     spec.info = Info {
         version: "0.4.0".into(),
