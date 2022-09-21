@@ -157,7 +157,7 @@ async fn main() -> std::io::Result<()> {
     spec.base_path = Some("/".to_string());
 
     spec.info = Info {
-        version: "0.4.0".into(),
+        version: "0.4.1".into(),
         contact: Some(Contact {
             name: Some("Maxim Burgerhout".to_string()),
             email: Some("maxim@wzzrd.com".to_string()),
