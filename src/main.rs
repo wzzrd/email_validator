@@ -1,13 +1,10 @@
-#[macro_use]
 extern crate serde_derive;
 
 use actix_cors::Cors;
-use actix_web::http::header;
 use actix_web::middleware::Logger;
-use actix_web::{App, Error, HttpResponse, HttpServer};
+use actix_web::{App, Error, HttpServer};
 use check_if_email_exists::syntax::{check_syntax, SyntaxDetails};
 use gethostname::gethostname;
-use indexmap::IndexMap;
 use log;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use paperclip::actix::{
@@ -15,11 +12,11 @@ use paperclip::actix::{
     web::{self, Json},
     Apiv2Schema, OpenApiExt,
 };
-use paperclip::api_v2_schema;
 use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License, OperationProtocol};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::fmt;
+use std::collections::{BTreeMap, BTreeSet};
+use log::error;
+use std::process;
 
 #[derive(Deserialize, Apiv2Schema)]
 /// The email address to be checked
