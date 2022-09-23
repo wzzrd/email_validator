@@ -1,66 +1,41 @@
+mod oas;
+mod oauth2;
+mod schemas;
+
 extern crate serde_derive;
 
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
-use actix_web::{App, Error, HttpServer};
+use actix_web::{App, Error, FromRequest, HttpRequest, HttpServer};
 use check_if_email_exists::syntax::{check_syntax, SyntaxDetails};
 use gethostname::gethostname;
 use log;
-use log::error;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use paperclip::actix::{
     api_v2_operation,
     web::{self, Json},
-    Apiv2Schema, OpenApiExt,
+    Apiv2Schema, Apiv2Security, OpenApiExt,
 };
-use paperclip::v2::models::{Contact, DefaultApiRaw, Info, License, OperationProtocol};
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet};
-use std::process;
+use std::future::{ready, Ready};
 
-#[derive(Deserialize, Apiv2Schema)]
-/// The email address to be checked
-struct Email {
-    /// The email address as a string
-    address: String,
-}
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-#[derive(Serialize, Apiv2Schema)]
-/// The verification results
-struct VerifiedEmail {
-    /// The supplied email address
-    address: String,
-    /// The domain part of the supplied email address
-    domain: String,
-    /// Boolean indicating whether the supplied email address is syntactically valid
-    is_valid_syntax: bool,
-    /// The username part of the supplied email address
-    username: String,
-}
 
-impl From<SyntaxDetails> for VerifiedEmail {
-    fn from(s: SyntaxDetails) -> Self {
-        let address = match s.address {
-            Some(a) => format!("{}", a),
-            None => "invalid address".to_string(),
-        };
-        VerifiedEmail {
-            address,
-            domain: s.domain.into(),
-            is_valid_syntax: s.is_valid_syntax.into(),
-            username: s.username.into(),
-        }
-    }
-}
-
-/// Validate the email address
-///
-/// Will provide information syntax validity, and split the address into domain and username parts
-#[api_v2_operation]
-async fn validate_address(a: Json<Email>) -> Result<Json<VerifiedEmail>, Error> {
+#[api_v2_operation(
+    summary = "Validates a single email address",
+    description = "Returns a JSON object containing information on validity of email address, and the components of that address.",
+    operation_id = "Validate email address",
+    consumes = "application/json",
+    produces = "application/json"
+)]
+async fn validate_address(
+    _: oauth2::EmailValidationScopeAccess,
+    a: Json<schemas::Email>,
+) -> Result<Json<schemas::VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
     let res = check_syntax(&a.address);
-    Ok(Json(VerifiedEmail::from(res)))
+    Ok(Json(schemas::VerifiedEmail::from(res)))
 }
 
 #[actix_web::main]
@@ -68,107 +43,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
-    log::info!("Setting schema defaults");
-    let mut spec = DefaultApiRaw::default();
-    let badges = serde_json::json!(
-        [
-            {
-                "name": "env",
-                "value": "dev"
-            },
-            {
-                "name": "security",
-                "value": "medium"
-            },
-            {
-                "name": "region",
-                "value": "global"
-            }
-        ]
-    );
-    let mut info_exts = BTreeMap::new();
-    info_exts.insert("x-category".to_string(), serde_json::json!("Utility APIs"));
-    info_exts.insert(
-        "x-long-description".to_string(),
-        serde_json::Value::String(include_str!("../README.md").to_string()),
-    );
-    info_exts.insert(
-        "x-thumbnail".to_string(),
-        serde_json::Value::String(
-            "https://en.gravatar.com/userimage/3149428/abb6f0635c488a6833a4966c9cff4ea2.jpeg"
-                .to_string(),
-        ),
-    );
-    info_exts.insert(
-        "x-version-lifecycle".to_string(),
-        serde_json::to_string("active").unwrap().parse()?,
-    );
-    info_exts.insert(
-        "x-collections".to_string(),
-        serde_json::Value::Array(vec![serde_json::Value::String(
-            "consumer-onboarding".to_string(),
-        )]),
-    );
-    info_exts.insert(
-        "x-website".to_string(),
-        serde_json::Value::String("https://www.wzzrd.com".to_string()),
-    );
-    info_exts.insert("x-public".to_string(), serde_json::Value::Bool(false));
-    info_exts.insert(
-        "termsOfService".to_string(),
-        serde_json::Value::String("https:///www.wzzrd.com/tos".to_string()),
-    );
-    info_exts.insert("x-badges".to_string(), badges);
-
-    let mut root_exts = BTreeMap::new();
-    root_exts.insert(
-        "x-documentation".to_string(),
-        serde_json::json!(
-            {
-                "readme": "this is the readme string",
-                "spotlights":
-                [
-                    {
-                        "title": "a spotlight",
-                        "description": "the spotlight explained",
-                        "link": "https://www.wzzrd.com"
-                    }
-                ]
-            }
-        ),
-    );
-
-    spec.extensions = root_exts;
-    spec.schemes = BTreeSet::new();
-    spec.schemes.insert(OperationProtocol::Https);
-
-    // Set API gateway to populate server field in OAS
-    let gw = match std::env::var("GATEWAY") {
-        Ok(g) => g,
-        Err(_) => {
-            error!("You should set the GATEWAY variable to the gateway this API is behind");
-            error!("before running it. Otherwise, I cannot render a proper OAS.");
-            process::exit(1);
-        }
-    };
-    spec.host = Some(gw);
-    spec.base_path = Some("/".to_string());
-
-    spec.info = Info {
-        version: "0.4.2".into(),
-        contact: Some(Contact {
-            name: Some("Maxim Burgerhout".to_string()),
-            email: Some("maxim@wzzrd.com".to_string()),
-            url: Some("https://www.wzzrd.com".to_string()),
-        }),
-        license: Some(License {
-            name: Some("something legal".to_string()),
-            url: Some("https://www.wzzrd.com".to_string()),
-        }),
-        title: "Email address verification".into(),
-        description: Some("This API verifies the validity of email addresses".to_string()),
-        extensions: info_exts,
-    };
+    let spec = oas::build_spec(&VERSION);
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
@@ -184,6 +59,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap_api_with_spec(spec.clone())
             .with_json_spec_v3_at("/spec/v3")
+            .with_json_spec_at("/spec/v2")
             .wrap(Logger::default())
             .wrap(Cors::permissive())
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
