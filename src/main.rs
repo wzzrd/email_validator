@@ -43,7 +43,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
-    let spec = oas::build_spec(&VERSION);
+    let spec = oas::build_spec(&VERSION, &GATEWAY);
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
     let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();

@@ -6,7 +6,10 @@ use paperclip::v2::models::{
 use std::collections::{BTreeMap, BTreeSet};
 use std::process;
 
-pub fn build_spec(version: &str) -> Api<DefaultParameterRaw, DefaultResponseRaw, DefaultSchemaRaw> {
+pub fn build_spec(
+    version: &str,
+    gateway: &str,
+) -> Api<DefaultParameterRaw, DefaultResponseRaw, DefaultSchemaRaw> {
     log::info!("Setting schema defaults");
     let mut spec = DefaultApiRaw::default();
     let badges = serde_json::json!(
@@ -31,7 +34,9 @@ pub fn build_spec(version: &str) -> Api<DefaultParameterRaw, DefaultResponseRaw,
     info_exts.insert("x-category".to_string(), serde_json::json!("Utility APIs"));
     info_exts.insert(
         "x-long-description".to_string(),
-        serde_json::Value::String("Use this API to syntactically validate email address".to_string()),
+        serde_json::Value::String(
+            "Use this API to syntactically validate email address".to_string(),
+        ),
     );
     info_exts.insert(
         "x-thumbnail".to_string(),
@@ -63,7 +68,7 @@ pub fn build_spec(version: &str) -> Api<DefaultParameterRaw, DefaultResponseRaw,
         "x-gateways".to_string(),
         serde_json::json!([
         {
-            "url": "gw2.wzzrd.com"
+            "url": String::from(gateway)
         }
         ]),
     );
@@ -116,16 +121,7 @@ pub fn build_spec(version: &str) -> Api<DefaultParameterRaw, DefaultResponseRaw,
     spec.schemes = BTreeSet::new();
     spec.schemes.insert(OperationProtocol::Https);
 
-    // Set API gateway to populate server field in OAS
-    let gw = match std::env::var("GATEWAY") {
-        Ok(g) => g,
-        Err(_) => {
-            error!("You should set the GATEWAY variable to the gateway this API is behind");
-            error!("before running it. Otherwise, I cannot render a proper OAS.");
-            process::exit(1);
-        }
-    };
-    spec.host = Some(gw);
+    spec.host = Some(gateway.into());
     spec.base_path = Some("/".to_string());
 
     spec.info = Info {
