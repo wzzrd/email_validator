@@ -19,8 +19,8 @@ use paperclip::actix::{
 use serde::{Deserialize, Serialize};
 use std::future::{ready, Ready};
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
+const VERSION: &str = env!("CARGO_PKG_VERSION", "Cargo.toml is missing a version number.");
+const GATEWAY: &str = env!("GATEWAY", "Please set the GATEWAY environment variable.");
 
 #[api_v2_operation(
     summary = "Validates a single email address",
