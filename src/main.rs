@@ -23,14 +23,30 @@ const VERSION: &str = env!("CARGO_PKG_VERSION", "Cargo.toml is missing a version
 const GATEWAY: &str = env!("GATEWAY", "Please set the GATEWAY environment variable.");
 
 #[api_v2_operation(
-    summary = "Validates a single email address",
+    summary = "Simple validation of a single email address",
     description = "Returns a JSON object containing information on validity of email address, and the components of that address.",
     operation_id = "Validate email address",
     consumes = "application/json",
     produces = "application/json"
 )]
 async fn validate_address(
-    _: oauth2::EmailValidationScopeAccess,
+    a: Json<schemas::Email>,
+) -> Result<Json<schemas::VerifiedEmail>, Error> {
+    log::info!("Verifying: {}", &a.address);
+    let res = check_syntax(&a.address);
+    Ok(Json(schemas::VerifiedEmail::from(res)))
+}
+
+#[api_v2_operation(
+summary = "Deep validation of a single email address",
+description = "Returns a JSON object containing information on validity of email address, and the components of that address.",
+operation_id = "Deep validate email address",
+consumes = "application/json",
+produces = "application/json"
+)]
+async fn deep_validate_address(
+    o: oauth2::OAuth2Access,
+    s: oauth2::EmailValidationScopeAccess,
     a: Json<schemas::Email>,
 ) -> Result<Json<schemas::VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
@@ -63,6 +79,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Cors::permissive())
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
+            .service(web::resource("/v1/deep_validate").route(web::post().to(deep_validate_address)))
             .build()
     })
     .bind_openssl(("0.0.0.0", port), builder)?
