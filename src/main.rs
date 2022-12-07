@@ -9,7 +9,6 @@ use actix_web::middleware::Logger;
 use actix_web::{App, Error, FromRequest, HttpRequest, HttpServer};
 use check_if_email_exists::syntax::{check_syntax, SyntaxDetails};
 use gethostname::gethostname;
-use log;
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use paperclip::actix::{
     api_v2_operation,
