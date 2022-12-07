@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install Rust nightly
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
       - name: Extract branch name
         id: extractBranch
         shell: bash
