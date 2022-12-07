@@ -1,4 +1,3 @@
-use log::error;
 use paperclip::v2::models::{
     Api, Contact, DefaultApiRaw, DefaultParameterRaw, DefaultResponseRaw, DefaultSchemaRaw,
     ExternalDocs, Info, License, OperationProtocol, Tag,
@@ -30,7 +29,8 @@ pub fn build_spec(
     // We need this to be a <String, Value> because below, we are inserting Strings, Bools and Vecs
     // into that Value.
     let mut info_exts = BTreeMap::new();
-    info_exts.insert("x-category".to_string(), serde_json::json!("Utility APIs"));
+    const CATEGORY: &str = env!("CATEGORY", "Please set the CATEGORY environment variable.");
+    info_exts.insert("x-category".to_string(), serde_json::json!(CATEGORY));
     info_exts.insert(
         "x-long-description".to_string(),
         serde_json::Value::String(
@@ -47,10 +47,11 @@ pub fn build_spec(
         "x-version-lifecycle".to_string(),
         serde_json::json!("active"),
     );
-    info_exts.insert(
-        "x-collections".to_string(),
-        serde_json::json!(["consumer-onboarding"]),
+    const COLLECTION: &str = env!(
+        "COLLECTION",
+        "Please set the COLLECTION environment variable."
     );
+    info_exts.insert("x-collections".to_string(), serde_json::json!([COLLECTION]));
     info_exts.insert(
         "x-website".to_string(),
         serde_json::json!("https://100things.wzzrd.com"),
