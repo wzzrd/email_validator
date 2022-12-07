@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Rust nightly
-        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile minimal -y
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile default -y
 
       - name: Run cargo fmt
         run: cargo fmt --all -- --check
