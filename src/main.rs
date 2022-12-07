@@ -71,7 +71,7 @@ async fn main() -> std::io::Result<()> {
         .unwrap_or_else(|_| "8080".to_string())
         .parse()
         .expect("PORT must be a number!");
-    HttpServer::new(move || {
+    let server = HttpServer::new(move || {
         App::new()
             .wrap_api_with_spec(spec.clone())
             .with_json_spec_v3_at("/spec/v3")
@@ -79,10 +79,25 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(Cors::permissive())
             .service(web::resource("/v1/validate").route(web::post().to(validate_address)))
-            .service(web::resource("/v1/deep_validate").route(web::post().to(deep_validate_address)))
+            .service(
+                web::resource("/v1/deep_validate").route(web::post().to(deep_validate_address)),
+            )
             .build()
-    })
-    .bind_openssl(("0.0.0.0", port), builder)?
-    .run()
-    .await
+    });
+
+    match std::env::var("SSL") {
+        Ok(_) => {
+            log::info!("Starting up with SSL support");
+            let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+            builder
+                .set_private_key_file("key.pem", SslFiletype::PEM)
+                .unwrap();
+            builder.set_certificate_chain_file("cert.pem").unwrap();
+            server.bind_openssl(("0.0.0.0", port), builder)?.run().await
+        }
+        _ => {
+            log::info!("Starting up without SSL support");
+            server.bind(("0.0.0.0", port))?.run().await
+        }
+    }
 }
