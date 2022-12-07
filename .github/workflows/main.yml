@@ -7,6 +7,8 @@ on:
 
 env:
   GATEWAY: gw.rapid.wzzrd.com
+  CATEGORY: Other
+  COLLECTION: "Today's top APIs"
 
 jobs:
   formatting_and_linting:

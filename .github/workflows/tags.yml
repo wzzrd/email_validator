@@ -7,7 +7,9 @@ on:
 
 env:
   GATEWAY: gw.rapid.wzzrd.com
-      
+  CATEGORY: Other
+  COLLECTION: "Today's top APIs"
+
 jobs:
   container_build:
     name: Build and push container
