@@ -7,7 +7,6 @@ use crate::Ready;
 use crate::{ready, GATEWAY};
 use actix_web::error::ErrorUnauthorized;
 use log::debug;
-use std::env;
 
 // The code below is based on macros expansions of the #[openapi] and #Apiv2Security macros
 // Using those macros limits the run time customization options for token_url, which is

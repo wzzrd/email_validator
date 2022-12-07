@@ -4,7 +4,6 @@ use paperclip::v2::models::{
     ExternalDocs, Info, License, OperationProtocol, Tag,
 };
 use std::collections::{BTreeMap, BTreeSet};
-use std::process;
 
 pub fn build_spec(
     version: &str,
