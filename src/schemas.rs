@@ -23,7 +23,6 @@ pub struct VerifiedEmail {
     pub username: String,
 }
 
-
 impl From<SyntaxDetails> for VerifiedEmail {
     fn from(s: SyntaxDetails) -> Self {
         let address = match s.address {
