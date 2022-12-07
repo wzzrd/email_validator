@@ -31,7 +31,7 @@ jobs:
       - name: Check openapi.json changes
         id: oasChanges
         run: echo "CHANGES=$(git status openapi.json --porcelain)" >> $GITHUB_OUTPUT
-      - name: Commit packed js
+      - name: Commit new OpenAPI spec
         id: commitOas
         if: steps.oasChanges.outputs.CHANGES
         run: |
