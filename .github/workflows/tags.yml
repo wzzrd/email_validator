@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - testing
 
 env:
   GATEWAY: gw.rapid.wzzrd.com
