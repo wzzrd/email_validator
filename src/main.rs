@@ -19,7 +19,10 @@ use paperclip::actix::{
 use serde::{Deserialize, Serialize};
 use std::future::{ready, Ready};
 
-const VERSION: &str = env!("CARGO_PKG_VERSION", "Cargo.toml is missing a version number.");
+const VERSION: &str = env!(
+    "CARGO_PKG_VERSION",
+    "Cargo.toml is missing a version number."
+);
 const GATEWAY: &str = env!("GATEWAY", "Please set the GATEWAY environment variable.");
 
 #[api_v2_operation(
@@ -29,20 +32,18 @@ const GATEWAY: &str = env!("GATEWAY", "Please set the GATEWAY environment variab
     consumes = "application/json",
     produces = "application/json"
 )]
-async fn validate_address(
-    a: Json<schemas::Email>,
-) -> Result<Json<schemas::VerifiedEmail>, Error> {
+async fn validate_address(a: Json<schemas::Email>) -> Result<Json<schemas::VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
     let res = check_syntax(&a.address);
     Ok(Json(schemas::VerifiedEmail::from(res)))
 }
 
 #[api_v2_operation(
-summary = "Deep validation of a single email address",
-description = "Returns a JSON object containing information on validity of email address, and the components of that address.",
-operation_id = "Deep validate email address",
-consumes = "application/json",
-produces = "application/json"
+    summary = "Deep validation of a single email address",
+    description = "Returns a JSON object containing information on validity of email address, and the components of that address.",
+    operation_id = "Deep validate email address",
+    consumes = "application/json",
+    produces = "application/json"
 )]
 async fn deep_validate_address(
     o: oauth2::OAuth2Access,
@@ -62,11 +63,6 @@ async fn main() -> std::io::Result<()> {
     let spec = oas::build_spec(&VERSION, &GATEWAY);
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
-    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-    builder
-        .set_private_key_file("key.pem", SslFiletype::PEM)
-        .unwrap();
-    builder.set_certificate_chain_file("cert.pem").unwrap();
     let port = std::env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
         .parse()
