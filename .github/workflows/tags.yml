@@ -44,6 +44,7 @@ jobs:
   container_build:
     name: Build and push container
     runs-on: ubuntu-latest
+    needs: generate_spec
     steps:
       - uses: actions/checkout@v2
       - name: Log into Quay.io
