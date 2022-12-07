@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GATEWAY: gw.rapid.wzzrd.com
+
 jobs:
   combo:
     name: Clippy + rustfmt
@@ -32,3 +35,41 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
+
+  generate_spec:
+    name: Generate and download OpenAPI spec file
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust nightly
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile minimal -y
+      - name: Extract branch name
+        id: extractBranch
+        shell: bash
+        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+      - name: Build API
+        run: cargo build
+      - name: Run API in debug mode
+        run: cargo run &
+      - name: Download OpenAPI spec from API
+        run: curl http://localhost:8080/spec/v3 -o openapi.json
+      - name: Check openapi.json changes
+        id: oasChanges
+        run: echo "CHANGES=$(git status openapi.json --porcelain)" >> $GITHUB_OUTPUT
+      - name: Commit new OpenAPI spec
+        id: commitOas
+        if: steps.oasChanges.outputs.CHANGES
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add openapi.json
+          git commit -m "Newly OpenAPI spec built and committed"
+      - name: Push new commit
+        if: steps.commitOas.outcome == 'success'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tags: true
+          force: true
+          branch: ${{ steps.extractBranch.outputs.BRANCH }}
+
