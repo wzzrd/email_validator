@@ -65,11 +65,7 @@ pub fn build_spec(
     let mut root_exts = BTreeMap::new();
     root_exts.insert(
         "x-gateways".to_string(),
-        serde_json::json!([
-        {
-            "url": String::from(gateway)
-        }
-        ]),
+        serde_json::json!([{ "url": String::from(gateway) }]),
     );
     root_exts.insert(
         "x-documentation".to_string(),
