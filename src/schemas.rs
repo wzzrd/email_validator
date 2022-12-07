@@ -26,14 +26,14 @@ pub struct VerifiedEmail {
 impl From<SyntaxDetails> for VerifiedEmail {
     fn from(s: SyntaxDetails) -> Self {
         let address = match s.address {
-            Some(a) => format!("{}", a),
+            Some(a) => format!("{a}"),
             None => "invalid address".to_string(),
         };
         VerifiedEmail {
             address,
-            domain: s.domain.into(),
-            is_valid_syntax: s.is_valid_syntax.into(),
-            username: s.username.into(),
+            domain: s.domain,
+            is_valid_syntax: s.is_valid_syntax,
+            username: s.username,
         }
     }
 }

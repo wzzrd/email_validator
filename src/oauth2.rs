@@ -46,7 +46,7 @@ impl FromRequest for OAuth2Access {
             return ready(Ok(Self {}));
         }
         let error = ErrorUnauthorized("User not logged in");
-        return ready(Err(error));
+        ready(Err(error))
     }
 }
 
@@ -68,13 +68,13 @@ impl FromRequest for EmailValidationScopeAccess {
                 .expect("Can't read X-Authenticated-Scope header value")
                 .to_str()
                 .expect("Can't convert X-Authenticated-Scope header value to string");
-            let s = scopes.split(",");
+            let s = scopes.split(',');
             let scope_list = s.collect::<Vec<&str>>();
             if scope_list.contains(&"email_validation") {
                 return ready(Ok(Self {}));
             }
         }
         let error = ErrorUnauthorized("No valid scope found");
-        return ready(Err(error));
+        ready(Err(error))
     }
 }
