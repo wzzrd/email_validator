@@ -46,8 +46,8 @@ async fn validate_address(a: Json<schemas::Email>) -> Result<Json<schemas::Verif
     produces = "application/json"
 )]
 async fn deep_validate_address(
-    o: oauth2::OAuth2Access,
-    s: oauth2::EmailValidationScopeAccess,
+    _o: oauth2::OAuth2Access,
+    _s: oauth2::EmailValidationScopeAccess,
     a: Json<schemas::Email>,
 ) -> Result<Json<schemas::VerifiedEmail>, Error> {
     log::info!("Verifying: {}", &a.address);
