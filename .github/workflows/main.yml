@@ -16,25 +16,14 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: Install nightly toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: nightly
-          override: true
-          components: rustfmt, clippy
+      - name: Install Rust nightly
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile minimal -y
 
       - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        run: cargo fmt --all -- --check
 
       - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+        run: cargo clippy -- -D warnings
 
   generate_spec:
     name: Generate and download OpenAPI spec file
