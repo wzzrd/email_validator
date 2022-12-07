@@ -14,13 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Rust nightly
-        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
+        run: curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly --profile minimal -y
       - name: Extract branch name
         id: extractBranch
         shell: bash
         run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
       - name: Build and run API in debug mode
-        run: cargo run &
+        run: $HOME/.cargo/bin/cargo run &
       - name: Download OpenAPI spec from API
         run: curl http://localhost:8080/spec/v3 -o openapi.json
       - name: Check openapi.json changes
