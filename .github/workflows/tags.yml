@@ -6,6 +6,9 @@ on:
       - 'v*'
     branches:
       - testing
+
+env:
+  GATEWAY: gw.rapid.wzzrd.com
       
 jobs:
   generate_spec:
