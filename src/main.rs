@@ -1,3 +1,4 @@
+mod misc;
 mod oas;
 mod oauth2;
 mod schemas;
@@ -22,7 +23,6 @@ const VERSION: &str = env!(
     "CARGO_PKG_VERSION",
     "Cargo.toml is missing a version number."
 );
-const GATEWAY: &str = env!("GATEWAY", "Please set the GATEWAY environment variable.");
 
 #[api_v2_operation(
     summary = "Simple validation of a single email address",
@@ -57,9 +57,11 @@ async fn deep_validate_address(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "debug");
+    let gateway = misc::env_var("GATEWAY");
+
     env_logger::init();
 
-    let spec = oas::build_spec(VERSION, GATEWAY);
+    let spec = oas::build_spec(VERSION, &gateway);
 
     log::info!("Starting up on {}", gethostname().into_string().unwrap());
     let port = std::env::var("PORT")

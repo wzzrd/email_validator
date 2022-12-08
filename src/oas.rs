@@ -1,3 +1,4 @@
+use crate::misc::{env_var, list_into_vector};
 use paperclip::v2::models::{
     Api, Contact, DefaultApiRaw, DefaultParameterRaw, DefaultResponseRaw, DefaultSchemaRaw,
     ExternalDocs, Info, License, OperationProtocol, Tag,
@@ -9,6 +10,10 @@ pub fn build_spec(
     gateway: &str,
 ) -> Api<DefaultParameterRaw, DefaultResponseRaw, DefaultSchemaRaw> {
     log::info!("Setting schema defaults");
+    let category = env_var("CATEGORY");
+    let cols = env_var("COLLECTIONS");
+    let collections = list_into_vector(cols);
+
     let mut spec = DefaultApiRaw::default();
     let badges = serde_json::json!(
         [
@@ -29,8 +34,7 @@ pub fn build_spec(
     // We need this to be a <String, Value> because below, we are inserting Strings, Bools and Vecs
     // into that Value.
     let mut info_exts = BTreeMap::new();
-    const CATEGORY: &str = env!("CATEGORY", "Please set the CATEGORY environment variable.");
-    info_exts.insert("x-category".to_string(), serde_json::json!(CATEGORY));
+    info_exts.insert("x-category".to_string(), serde_json::json!(category));
     info_exts.insert(
         "x-long-description".to_string(),
         serde_json::Value::String(
@@ -47,11 +51,7 @@ pub fn build_spec(
         "x-version-lifecycle".to_string(),
         serde_json::json!("active"),
     );
-    const COLLECTION: &str = env!(
-        "COLLECTION",
-        "Please set the COLLECTION environment variable."
-    );
-    info_exts.insert("x-collections".to_string(), serde_json::json!([COLLECTION]));
+    info_exts.insert("x-collections".to_string(), serde_json::json!(collections));
     info_exts.insert(
         "x-website".to_string(),
         serde_json::json!("https://100things.wzzrd.com"),

@@ -1,10 +1,11 @@
+use crate::misc::env_var;
+use crate::ready;
 use crate::Apiv2Security;
 use crate::Deserialize;
 use crate::Error;
 use crate::FromRequest;
 use crate::HttpRequest;
 use crate::Ready;
-use crate::{ready, GATEWAY};
 use actix_web::error::ErrorUnauthorized;
 use log::debug;
 
@@ -18,7 +19,8 @@ impl paperclip::v2::schema::Apiv2Schema for OAuth2Access {
         Some("OAuth2 Authorization".to_string())
     }
     fn security_scheme() -> Option<paperclip::v2::models::SecurityScheme> {
-        let token_url = format!("https://{}/oauth2/token", &GATEWAY);
+        let gateway = env_var("GATEWAY");
+        let token_url = format!("https://{}/oauth2/token", &gateway);
         Some(paperclip::v2::models::SecurityScheme {
             type_: "oauth2".to_string(),
             name: None,
