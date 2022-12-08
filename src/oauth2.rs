@@ -16,7 +16,7 @@ use log::debug;
 pub struct OAuth2Access;
 impl paperclip::v2::schema::Apiv2Schema for OAuth2Access {
     fn name() -> Option<String> {
-        Some("OAuth2 Authorization".to_string())
+        Some("OAuth2Authorization".to_string())
     }
     fn security_scheme() -> Option<paperclip::v2::models::SecurityScheme> {
         let gateway = env_var("GATEWAY");
